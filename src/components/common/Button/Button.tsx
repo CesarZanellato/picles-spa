@@ -11,6 +11,7 @@ let buttonClass = styles.buttonBase
 switch(variant){
     case ButtonVariant.Default: buttonClass += ` ${styles.buttonDefault}` ; break
     case ButtonVariant.Disabled: buttonClass += ` ${styles.buttonDisabled}`; break
+    case ButtonVariant.Outlined: buttonClass += ` ${styles.buttonOutlined}`; break
     case ButtonVariant.Default: buttonClass += ` ${styles.buttonDefault}`; break
     case ButtonVariant.Text: buttonClass += ` ${styles.buttonText}`; break   
 }
