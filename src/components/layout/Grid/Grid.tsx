@@ -6,5 +6,5 @@ interface IGrid{
 }
 
 export function Grid({children}: IGrid){
-    return <div className={styles.grid}>{children}</div>
+    return (<div className={styles.grid}>{children}</div>)
 }
