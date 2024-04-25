@@ -6,6 +6,9 @@ import styles from "./Shelter.module.css";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormMask } from "use-mask-input";
+import { Toaster, toast } from "sonner";
+import { updateShelter } from "../../../services/shelter/updateShelter";
+import { useQueryClient } from "@tanstack/react-query";
 
 const shelterSchema = z.object({
   name: z
@@ -18,12 +21,12 @@ const shelterSchema = z.object({
   phone: z.string().refine((value) => {
     const digits = value.replace(/\D/g, "").length;
     return digits >= 10 && digits <= 11;
-  }, "Número deve ter entre 10 e 11 caracteres"),
+  }, "Número deve ter entre 10 e 13 caracteres"),
 
   whatsApp: z.string().refine((value) => {
     const digits = value.replace(/\D/g, "").length;
     return digits >= 10 && digits <= 11;
-  }, "Número deve ter entre 10 e 11 caracteres"),
+  }, "Número deve ter entre 10 e 13 caracteres"),
 });
 
 type ShelterSchema = z.infer<typeof shelterSchema>;
@@ -34,9 +37,33 @@ export function Shelter() {
   });
 
   const registerWithMask = useHookFormMask(register);
+  const queryClient = useQueryClient()
 
-  function submit({ name, email, phone, whatsApp }: ShelterSchema) {
-    console.log(name);
+  async function submit({ name, email, phone, whatsApp }: ShelterSchema) {   
+
+    const toastId = toast.loading("Salvando dados");
+    try {
+      await updateShelter({
+        name,
+        email,
+        phone: phone.replace(/\D/g, ""),
+        whatsApp: whatsApp.replace(/\D/g, ""),
+      });
+      queryClient.invalidateQueries({queryKey: ['get-shelter']})
+      
+      toast.success("Dados salvos com sucesso", {
+        id: toastId,
+        closeButton: true,
+      });
+    } catch
+    {
+      toast.error("Não foi possível salvar os dados", {
+        id: toastId,
+        closeButton: true,
+      });
+    }
+
+    console.log(name, email, phone, whatsApp);
   }
 
   return (
